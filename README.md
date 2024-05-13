@@ -4,7 +4,10 @@ TP_ASM 3SI
 Some exercices in assembly x64 NASM
 
 Compiled with : 
-function asm(){
+.bashrc
+```
+function asm()
+{
   if [ $# -ne 1 ]; then
     echo "Usage: asm <file.s>"
     return 1
@@ -16,3 +19,4 @@ function asm(){
 }
 
 alias asm='asm'
+```

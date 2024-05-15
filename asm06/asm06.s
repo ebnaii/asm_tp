@@ -41,10 +41,10 @@ done:
     mov rcx, 2
 
     cmp r8, 1
-    je _prime
+    je _notprime
 
     cmp r8, 2
-    je _notprime
+    je _prime
 
 loop:
     xor rdx, rdx

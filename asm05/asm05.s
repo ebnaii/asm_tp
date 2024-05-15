@@ -224,7 +224,8 @@ std__to_string:
         
         cmp rcx, 0        ; See if the divisor has become zero
         jg .to_string      ; If not, repeat the same process
-
+    
+    mov byte [rsi + rdx], 0
     pop rdx               ; Pop the top of the stack into (RDX). It's the value of (RDI): the number of digits in the original number
     pop rsi               ; Bring (RSI) to the beginning of the string before returning as well
     ret

@@ -1,7 +1,8 @@
 # tp_asm
 TP_ASM 3SI
 
-Discord : .naii.
+Discord : 
+> .naii.
 
 Some exercices in assembly x64 NASM
 

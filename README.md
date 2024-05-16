@@ -6,6 +6,9 @@ Discord :
 
 Some exercices in assembly x64 NASM
 
+![tp](https://github.com/ebnaii/asm_tp/assets/82275372/6efe2c32-d185-4e9d-bc6f-0baac5de8239)
+
+
 Compiled with : 
 .bashrc
 ```

@@ -82,7 +82,7 @@ doneConvert:
         mov rcx, 2
         jmp ._choosen
     ._choosen:
-    mov rax, r8
+        mov rax, r8
 
 loop:
     xor rdx, rdx

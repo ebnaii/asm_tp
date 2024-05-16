@@ -1,4 +1,4 @@
-
+; SIMPLE CODE THAT EXIT 0, base of everything
 section .text
 
     global _start

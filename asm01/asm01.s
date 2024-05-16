@@ -1,3 +1,8 @@
+msg: db "1337", 01
+.len: equ $ - msg
+
+; SIMPLE CODE THAT PRINTS 1337
+
 section .text
 
     global _start
@@ -17,5 +22,3 @@ _start:
 
     section .data
 
-msg: db "1337", 01
-.len: equ $ - msg

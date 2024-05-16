@@ -3,11 +3,17 @@ global _start
 section .bss
     nb resb 32
 
+section .data
+    help: db "Add numbers from 0 to NUMBER-1", 10
+    .lenHelp: equ $ - help
+    usage: db "USAGE : ./asm07 NUMBER", 10
+    .lenUsage: equ $ - usage
+
 
 section .text
 _start:
 
-    mov r13, [rsp]
+    mov r13, [rsp] ; is there the attended arguments ?
     cmp r13, 0x2
     jne _error
 
@@ -16,37 +22,38 @@ _start:
     mov rsi, [rsi]
     mov rdi, nb
     mov rcx, 4
-    rep movsb
+    rep movsb ; ; keeping the number sent
 
     xor rdi, rdi
     mov r8, 0
 
-convert:
-    mov al, [nb + rdi]
+convert: ; cause the number is in "string mode" we swap it to "decimal mode"
+    mov al, [nb + rdi] 
     cmp al, 0
     je done
 
-    cmp rax, '0'
+    cmp rax, '0' ; we check if its a number or not, which means between char 0 (48) and char 9 (57)
+
     jl _error
 
     cmp rax, '9'
     jg _error
 
-    sub rax, 48
-    imul r8, 10
+    sub rax, 48  ;we sub the value for char 0 (48) to get its decimal form
+    imul r8, 10  ; ; imul to write number from left to right
     add r8, rax
     
     inc rdi
     jmp convert
 
 done:
-    cmp r8, 0
+    cmp r8, 0 ; if its 0 we can already end since there is currently 0 in rax
     je _end
     
-    mov r9, 0
-    mov rax, 0
-    dec r8
-
+    mov r9, 0 ; otherwise, we prepare for adding every numbers
+    mov rax, 0 ; rax = result
+    dec r8     ; r8 = last number
+               ; r9 = current number
 loop:
     add rax, r9
     
@@ -58,7 +65,7 @@ loop:
 
 
 _end:
-    call std__to_string
+    call std__to_string ; we call our print function
     mov rax, 1
     mov rdi, 1
     syscall
@@ -68,6 +75,20 @@ _end:
     syscall
 
 _error:
+
+    mov rax, 1    ; print help message if there is an error
+    mov rdi, 1
+    mov rsi, help
+    mov rdx, help.lenHelp
+    syscall
+    
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, usage
+    mov rdx, usage.lenUsage
+    syscall
+
+
     mov rax, 60
     mov rdi, 1
     syscall

@@ -7,41 +7,47 @@ section .bss
     signNb2 resb 1
     finalSign resb 1
 
+section .data
+    help: db "Add 2 numbers sent in parameter, accepts negativ numbers", 10
+    .lenHelp: equ $ - help
+    usage: db "USAGE : ./asm08 NUMBER1 NUMBER2", 10
+    .lenUsage: equ $ - usage
+
 
 section .text
 _start:
     
-    mov r13, [rsp]
+    mov r13, [rsp]  ; is there the attended arguments ?
     cmp r13, 3
     jne _error
 
     mov rsi, rsp
     add rsi, 16
     mov rsi, [rsi]
-    mov rdi, nb1
+    mov rdi, nb1    ; keeping first number
     mov rcx, 4
     rep movsb
 
     mov rsi, rsp
     add rsi, 24
     mov rsi, [rsi]
-    mov rdi, nb2
+    mov rdi, nb2    ; keeping second number
     mov rcx, 4
     rep movsb
 
-    mov byte [signNb1], 0
-    mov byte [signNb2], 0
+    mov byte [signNb1], 0   ; we initalize the sign at positiv
+    mov byte [signNb2], 0   ; it will change later if its negativ
     mov byte [finalSign], 0
 
 
     xor rdi, rdi
     mov r8, 0
 
-sign1:
+sign1:                      ; change the value of sign1 var if the number1 is negativ
     mov al, [nb1 + rdi]
-    cmp al, '-'
+    cmp al, '-'             ; we check if the first char is a '-', meaning the number1 is negativ
     je ._negativ
-    jne convert1
+    jne convert1            ; otherwise we can convert the first number
     ._negativ:    
         mov byte [signNb1], 1
         inc rdi
@@ -52,14 +58,15 @@ convert1:
     cmp al, 0
     je done1
 
-    cmp rax, '0'
+    cmp rax, '0'    ; we check if its a number or not, which means between char 0 (48) and char 9 (57)
+
     jl _error
 
     cmp rax, '9'
     jg _error
 
-    sub rax, 48
-    imul r8, 10
+    sub rax, 48     ; we sub the value for char 0 (48) to get its decimal form
+    imul r8, 10 ; imul to write number from left to right 
     add r8, rax
 
     inc rdi
@@ -69,7 +76,7 @@ done1:
     xor rdi, rdi
     mov r9, 0
 
-sign2:
+sign2:              ; same as sign1 but for number2
     mov al, [nb2]
     cmp al, '-'
     je ._negativ
@@ -100,13 +107,13 @@ convert2:
 
 done2:
 
-    mov al, [signNb1]
-    mov bl, [signNb2]
+    mov al, [signNb1]   ; we compare both sign of each number
+    mov bl, [signNb2]   ; it will change all the calcul process
     cmp al, bl
     je ._sameSign
     jne ._diffSign
 
-    ._sameSign:
+    ._sameSign:         ; if signs are the same, we just add numbers and set the finalSign as negativ (1)
         cmp al, 0
         jne ._neg
         add r9, r8
@@ -115,21 +122,21 @@ done2:
             mov byte [finalSign], 1
             add r9, r8 ; both negativ we can exit with finalSign swapped to 1
             jmp _end
-    ._diffSign:
+    ._diffSign:       ; if signs are different, we substract the biggest of the 2 numbers and then set the finalSign as the biggest number (1 for negativ, 0 for positiv)
         cmp r8, r9
         ja ._nb1Greater
         jb ._nb2Greater
-        mov r9, 0 ; if nb 1 = nb 2, result is 0 dont even need to add
+        mov r9, 0 ; if nb 1 = nb 2, result is 0 we dont even need to add
         jmp _end
         ._nb1Greater:
             sub r8, r9
             mov r9, r8
-            mov al, [signNb1]
+            mov al, [signNb1] ; cause nb1 is bigger, the result will be its sign
             mov [finalSign], al
             jmp _end
         ._nb2Greater:
             sub r9, r8
-            mov al, [signNb2]
+            mov al, [signNb2] ; cause nb2 is bigger, the result will be its sign
             mov [finalSign], al
             jmp _end
 
@@ -138,7 +145,7 @@ done2:
 _end:
     mov rax, r9
     mov rcx, [finalSign]
-    call std__to_string
+    call std__to_string   ; we call our convert/print function
 
 _exit:
     mov rax, 1
@@ -150,14 +157,22 @@ _exit:
     syscall
 
 
-_error: 
-    mov rax, 60
-    mov rdi, 1  
+_error:
+
+    mov rax, 1    ; print help message if there is an error
+    mov rdi, 1
+    mov rsi, help
+    mov rdx, help.lenHelp
+    syscall
+    
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, usage
+    mov rdx, usage.lenUsage
     syscall
 
-_test: 
     mov rax, 60
-    mov rdi, 20
+    mov rdi, 1  
     syscall
 
 std__to_string:

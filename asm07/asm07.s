@@ -40,9 +40,13 @@ convert:
     jmp convert
 
 done:
+    cmp r8, 0
+    je _end
+    
     mov r9, 0
     mov rax, 0
     dec r8
+
 loop:
     add rax, r9
     

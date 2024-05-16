@@ -1,5 +1,12 @@
 global _start 
 
+section .data
+    help: db "Convert a number to hex (-h) or binary (-b)", 10
+    .lenHelp: equ $ - help
+    usage: db "USAGE : ./asm08 -[h|b] NUMBER", 10
+    .lenUsage: equ $ - usage
+
+
 section .bss
     nb resb 32
     string resb 32
@@ -140,6 +147,19 @@ _end:
     syscall
 
 _error:
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, help
+    mov rdx, help.lenHelp
+    syscall
+    
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, usage
+    mov rdx, usage.lenUsage
+    syscall
+
     mov rax, 60
     mov rdi, 1
     syscall
